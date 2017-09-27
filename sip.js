@@ -1240,7 +1240,16 @@ function makeTransactionLayer(options, transport) {
         });
     },
     createClientTransaction: function(connection, rq, callback) {
-      if(rq.method !== 'CANCEL') rq.headers.via[0].params.branch = generateBranch();
+        if (rq.method !== 'CANCEL') {
+            var branch = generateBranch();
+            if (rq.callId) {
+                branch += '-' + rq.callId;
+            }
+            if (rq.tag) {
+                branch += '-' + rq.tag;
+            }
+            rq.headers.via[0].params.branch = branch;
+        }
       
       
       if(typeof rq.headers.cseq !== 'object')
